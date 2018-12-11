@@ -9,20 +9,21 @@ def solve():
   assert_input(vectors)
 
   round = 0
+  previous_area = float("inf")
 
   while True:
     round = round + 1
     vectors = perform_round(vectors) 
     x_diff = x_spread(vectors)
     y_diff = y_spread(vectors)
-    # Guess it happens at 10942 by looking at output
-    # Could programmatically determine by looking at
-    # the plot of light area over time and taking the min.
-    # But really, why bother?
-    if round == 10942:
+    area = abs(x_diff) * abs(y_diff)
+    # The message appears at the minimum of the area as a function of round.
+    if area > previous_area:
       print(x_diff, y_diff)
-      show(vectors)
+      print(round-1)
+      show(undo_round(vectors))
       return
+    previous_area = area
 
 def show(vectors):
     x_diff = x_spread(vectors)
@@ -77,6 +78,12 @@ def perform_round(vectors):
     updated.append([v[0] + v[2], v[1] + v[3], v[2], v[3]])
   return updated
 
+def undo_round(vectors):
+  updated = []
+  for v in vectors:
+    updated.append([v[0] - v[2], v[1] - v[3], v[2], v[3]])
+  return updated
+
 def x_spread(vectors):
   return max_x(vectors) - min_x(vectors)
 
@@ -111,5 +118,4 @@ def assert_input(vectors):
   assert(vectors[312][3] == 5)
 
 if __name__ == '__main__':
-  result = solve()
-  print result
+  solve()
